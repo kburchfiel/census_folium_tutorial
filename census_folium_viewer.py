@@ -419,6 +419,8 @@ def generate_map(merged_data_table, shape_feature_name,
         # executed before the bins are calculated below in order to avoid
         # errors in which some data falls outside the bin dimensions.
 
+    # merged_data_table_copy['Tooltip'] = [merged_data_table_copy[shape_feature_name][i] + ": " + str(merged_data_table_copy[data_variable]) for i in range(len(merged_data_table_copy))]
+
 
     # The following lines limit the data to be mapped if a limit was entered
     # into the rows_to_map parameter. 
@@ -505,39 +507,49 @@ either \'percentiles\' or \'equally spaced.\'')
     'fillColor':stepped_cm(x['properties'][data_variable]), 'fillOpacity':0.75}
     # fillOpacity is set to 0.75 so that city and state names can be viewed
     # underneath the colored shapes.
-    
+
+
+    # Next, I'll create a GeoJsonTooltip object that will display the region
+    # name and data value for that region when the user hovers over it.
+    tooltip = folium.features.GeoJsonTooltip(fields=[shape_feature_name,data_variable], aliases = [feature_text, popup_variable_text])
+    # See https://python-visualization.github.io/folium/modules.html#folium.features.GeoJsonTooltip
+    # and https://python-visualization.github.io/folium/modules.html#folium.features.GeoJson
+
     geojson_object = folium.features.GeoJson(merged_data_table_copy, 
-    style_function = style_function)
+    style_function = style_function, tooltip = tooltip)
+
+
 
     geojson_object.add_to(m)
 
-    # Next, I'll add overlays that display the name of the shape and its
-    # value when the user hovers over it. This code also comes from 
-    # Amodiovalerio Verde.
+    
 
-    style_function = lambda x: {'fillColor': '#ffffff', 
-                                'color':'#000000', 
-                                'fillOpacity': 0.0, 
-                                'weight': 0.0}
-    highlight_function = lambda x: {'fillColor': '#000000', 
-                                    'color':'#000000', 
-                                    'fillOpacity': 0.50, 
-                                    'weight': 0.1}
-    data_popup = folium.features.GeoJson(
-        merged_data_table_copy,
-        style_function=style_function, 
-        control=False,
-        highlight_function=highlight_function, 
-        tooltip=folium.features.GeoJsonTooltip(
-            fields=[shape_feature_name, data_variable],
-            aliases=[feature_text, popup_variable_text],
-            style=("background-color: white; color: #333333; font-family: \
-            arial; font-size: 12px; padding: 10px;") 
-        )
-    )
-    m.add_child(data_popup)
-    m.keep_in_front(data_popup)
-    folium.LayerControl().add_to(m)
+    # The following code presents an alternate method of generating the
+    # GeoJsonTooltip objects. It comes from Amodiovalerio Verde.
+
+    # style_function = lambda x: {'fillColor': '#ffffff', 
+    #                             'color':'#000000', 
+    #                             'fillOpacity': 0.0, 
+    #                             'weight': 0.0}
+    # highlight_function = lambda x: {'fillColor': '#000000', 
+    #                                 'color':'#000000', 
+    #                                 'fillOpacity': 0.50, 
+    #                                 'weight': 0.1}
+    # data_popup = folium.features.GeoJson(
+    #     merged_data_table_copy,
+    #     style_function=style_function, 
+    #     control=False,
+    #     highlight_function=highlight_function, 
+    #     tooltip=folium.features.GeoJsonTooltip(
+    #         fields=[shape_feature_name, data_variable],
+    #         aliases=[feature_text, popup_variable_text],
+    #         style=("background-color: white; color: #333333; font-family: \
+    #         arial; font-size: 12px; padding: 10px;") 
+    #     )
+    # )
+    # m.add_child(data_popup)
+    # m.keep_in_front(data_popup)
+    # folium.LayerControl().add_to(m)
 
     # The function next calls create_vertical_legend to add a vertical
     # legend to the map (if requested).
@@ -721,6 +733,15 @@ def old_generate_map(merged_data_table, shape_feature_name,
     m.add_child(data_popup)
     m.keep_in_front(data_popup)
     folium.LayerControl().add_to(m)
+
+    # Note: A simpler means of adding a tooltip to the map would look something like the following. [I haven't tested out this code within this function, however.]
+
+    #     tooltip = folium.features.GeoJsonTooltip(fields = [shape_feature_name, data_variable], aliases = [feature_text, popup_variable_text)
+    # # Based on https://python-visualization.github.io/folium/modules.html#folium.features.GeoJsonTooltip
+
+    # folium.features.GeoJson(data = merged_data_table_copy, tooltip=tooltip, style_function = lambda x:{'opacity':0, 'fillOpacity':0}).add_to(m)
+
+    # # Style function parameters come from https://leafletjs.com/SlavaUkraini/reference.html#path ; the format of style_function is based on one of the examples on https://python-visualization.github.io/folium/modules.html#folium.features.GeoJsonTooltip
 
     m.save(html_save_path+'\\'+map_name+'.html')
 
