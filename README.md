@@ -2,7 +2,7 @@
 
 ![](https://github.com/kburchfiel/census_folium_tutorial/blob/master/interactive_map_demonstration.gif?raw=true)
 
-[Click here](https://wordpress.com/post/kburchfiel3.wordpress.com/410) to read my blog post about this program. 
+[Click here](https://kburchfiel3.wordpress.com/2022/01/13/census-folium-tutorial/) to read my blog post about this program. 
 
 This project demonstrates how to use Folium to generate interactive zip-, county-, and state-level choropleth maps. As part of this project, I wrote a function for creating a vertical legend as an alternative to the default horizontal one, as I find vertical legends to be easier to read in certain circumstances. (See the images below for examples of this custom legend.)
 
