@@ -127,7 +127,7 @@ data_path, data_feature_name, tolerance = 0.005):
     data_path: The path to a .csv file containing US Census data.
     data_feature_name: The name of the column within the US Census data .csv
     file that contains shape names (e.g. zip code boundaries). This column,
-    along with the column refered to by shape_feature_name, will be used
+    along with the column referred to by shape_feature_name, will be used
     to merge the shapefile and US Census data tables together. 
     tolerance: The extent to which the shapefiles will be simplified.
     Lower tolerance values result in more accurate shape boundaries but also
