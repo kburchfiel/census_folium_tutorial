@@ -13,6 +13,28 @@ Note: some files were too large to be included within the GitHub repository. You
 
 Here are example screenshots of the choropleth maps currently stored in this repository. (The original maps are .html files, so for the best viewing experience, I recommend downloading them to your computer and then opening them in a web browser. These screenshots don't display the interactive popup data stored in the .html maps.)
 
+[Click here](https://github.com/kburchfiel/census_folium_tutorial/tree/master/census_folium_map_screenshots) to access all choropleth map screenshots in the repository.
+
+### Population growth data:
+
+
+**Zip-level population growth from the American Community Survey's 2015 5-year averages to its 2020 5-year averages::**
+![](https://raw.githubusercontent.com/kburchfiel/census_folium_tutorial/master/census_folium_map_screenshots/acs5_2015_2020_zip_pop_growth.png)
+
+**County-level population growth from the American Community Survey's 2015 5-year averages to its 2020 5-year averages:**
+
+![](https://raw.githubusercontent.com/kburchfiel/census_folium_tutorial/master/census_folium_map_screenshots/acs5_2015_2020_county_pop_growth.png)
+
+
+**State-level population growth from the American Community Survey's 2015 5-year averages to its 2020 5-year averages:**
+![](https://raw.githubusercontent.com/kburchfiel/census_folium_tutorial/master/census_folium_map_screenshots/acs5_2015_2020_state_pop_growth.png)
+
+**County-level population growth from 2010 to 2020 (according to the decennial census:**
+![](https://raw.githubusercontent.com/kburchfiel/census_folium_tutorial/master/census_folium_map_screenshots/census_2010_2020_county_pop_growth.png)
+
+
+### Demographic data:
+
 Note that the zip- and county-level maps contain data from the ACS 2019 community survey (5-year averages), whereas the state-level maps contain data from the ACS 2019 community survey.
 
 Also note that these maps only show counties and zip codes with at least 1,000 households.

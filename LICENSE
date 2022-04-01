@@ -1,6 +1,20 @@
+Citation info for color_schemes_from_branca.json:
+
+Source: https://github.com/python-visualization/branca/blob/master/branca/_schemes.json
+
+I believe these schemes were originally created by Cynthia Brewer, 
+and are licensed under the Apache License, Version 2.0. 
+See http://www.personal.psu.edu/cab38/ColorBrewer/ColorBrewer_updates.html
+
+All tables containing US Census Data are released into the public domain.
+
+Licensing info for the rest of the program:
+
 MIT License
 
 Copyright (c) 2022 Kenneth Burchfiel
+
+
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
