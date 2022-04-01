@@ -112,11 +112,13 @@ color_list, variable_decimals):
 
 
 def prepare_zip_table(shapefile_path, shape_feature_name, 
-data_path, data_feature_name, tolerance = 0.005):
+data_path, data_feature_name, tolerance = 0.005, dropna_geometry = True):
     '''This function merges US Census zip code shapefile data with
     Census zip-code-level demographic data in order to create a DataFrame 
     that can be used to generate choropleth maps.
+    
     Variables:
+    
     shapefile_path: The path to the .shp file that contains the shapefile 
     data (e.g. zip code boundaries) to include within the table.
     shape_feature_name: The name of the column within the shapefile table that
@@ -124,29 +126,24 @@ data_path, data_feature_name, tolerance = 0.005):
     shapefile data that I downloaded, the column name in the US Census
     shapefile happened to be ZCTA5CE20, and contained zip code names (22101,
     05753, etc).
+    
     data_path: The path to a .csv file containing US Census data.
+    
     data_feature_name: The name of the column within the US Census data .csv
     file that contains shape names (e.g. zip code boundaries). This column,
     along with the column referred to by shape_feature_name, will be used
     to merge the shapefile and US Census data tables together. 
+    
     tolerance: The extent to which the shapefiles will be simplified.
     Lower tolerance values result in more accurate shape boundaries but also
     longer processing times and larger file sizes. I have found 0.005 to work
     pretty well for zip code maps.
-    Note: on one day when using prepare_zip_table, I received the following 
-    error message:
-    "ImportError: the 'read_file' function requires the 'fiona' package, 
-    but it is not installed or does not import correctly.
-    Importing fiona resulted in: DLL load failed while importing ogrext:
-    The specified module could not be found."
-    I received this error while using version 3.4.0 of GDAL and version 1.8.20 
-    of fiona. After trying a couple different uninstall/reinstall operations, 
-    I was able to resolve the error by force removing both GDAL and Fiona, 
-    then installing
-    fiona 1.8.19 (as suggested by Abhiram at
-    https://stackoverflow.com/a/69534619/13097194). Conda Forge installed 
-    GDAL 3.2.2 as part of this operation, and these two
-    seem to work together well.
+    
+    dropna_geometry: a boolean variable that determines whether or not to
+    remove all rows from the data table that lack coordinates in the geometry
+    column. This helps avoid 'NoneType' errors when producing maps. It 
+    requires the geometry column to be named 'geometry.'
+
     '''
 
     print("Reading shape data:")
@@ -175,23 +172,35 @@ data_path, data_feature_name, tolerance = 0.005):
     census_data = pd.read_csv(data_path)
     census_data[data_feature_name] = census_data[data_feature_name].astype(
         str).str.pad(5, fillchar = '0')
-    # Once again, str.pad is used to ensure that all zip codes contain
-    # five digits.
+    # Since the zip codes in the shapefile data are in string format, the 
+    # zip codes in the data file also need to be in string format.
+    # Str.pad is used to ensure that all zip codes contain five digits, which
+    # will help with the merging process. (str.zfill(5) would also work.)
     # Next, to make it easier to create choropleth maps, the function merges
     # the shapefile and census data tables.
     print("Merging shape and data tables:")
     merged_shape_data_table = pd.merge(shape_data, census_data, 
-    left_on = shape_feature_name, right_on = data_feature_name)
+    left_on = shape_feature_name, right_on = data_feature_name, how = 'outer')
+
+    # An outer join is used so that the table can remain compatible with
+    # additional datasets that are merged into this table. If an inner join
+    # were used, all regions not found in the data table would be removed, 
+    # limiting the table's versatility. 
+
+    if dropna_geometry == True:
+        merged_shape_data_table.dropna(subset = 'geometry', inplace = True)
     return merged_shape_data_table
 
 def prepare_county_table(shapefile_path, shape_state_code_column, 
 shape_county_code_column, tolerance, data_path, data_state_code_column, 
-data_county_code_column):
+data_county_code_column, dropna_geometry = True):
     '''This function merges US Census county shapefile data with
     Census county-level demographic data in order to create a DataFrame 
     that can be used to generate choropleth maps.
+    
     shape_state_code_column and shape_county_code_column refer to numerical
     state and county codes stored within the .shp shapefile document. 
+    
     data_state_code_column and data_county_code_column refer to equivalent
     codes stored within the .csv Census data document. These codes will 
     be used to merge the shapefile and Census data tables together.
@@ -201,11 +210,19 @@ data_county_code_column):
 
     print("Reading shape data:")
     shape_data = geopandas.read_file(shapefile_path)
-    # The merge process for county-level data will depend on state and county
-    # codes. These numerical codes were stored within the US Census county 
+    # The merge process for county-level data is based on state and county
+    # codes because the 'NAME' value for the data and shape DataFrames
+    # differs (see below). 
+    # These numerical codes were stored within the US Census county 
     # shapefiles and county-level demographic data that I downloaded.
     # To help ensure that the merge process is successful, this function
     # converts the state and county codes for both tables into integer format.
+    shape_data.rename(columns={'NAME':'SHORT_NAME'}, inplace = True) 
+    # The 'NAME' column in the Census .shp file contains only the name of
+    # the county (e.g. "Fairfax", whereas the 'NAME' column from the Census
+    # data table also includes the state name (e.g. "Fairfax County,
+    # Virginia"). Therefore, this column gets renamed above so that both
+    # can exist within the merged DataFrame as distinct variables.
     shape_data[shape_state_code_column] = shape_data[
         shape_state_code_column].astype(int)
     shape_data[shape_county_code_column] = shape_data[
@@ -221,12 +238,14 @@ data_county_code_column):
     print("Merging shape and data tables:")
     merged_shape_data_table = pd.merge(shape_data, census_data, left_on = [
         shape_state_code_column, shape_county_code_column], right_on = [
-            data_state_code_column, data_county_code_column])
+            data_state_code_column, data_county_code_column], how = 'outer')
+    if dropna_geometry == True:
+        merged_shape_data_table.dropna(subset = 'geometry', inplace = True)
     return merged_shape_data_table
 
 
 def prepare_state_table(shapefile_path, shape_feature_name, tolerance,
-data_path, data_feature_name):
+data_path, data_feature_name, dropna_geometry = True):
     '''This function merges US Census state shapefile data with
     Census state-level demographic data in order to create a DataFrame 
     that can be used to generate choropleth maps.
@@ -241,7 +260,9 @@ data_path, data_feature_name):
     census_data = pd.read_csv(data_path)
     print("Merging shape and data tables:")
     merged_shape_data_table = pd.merge(shape_data, census_data, 
-    left_on = shape_feature_name, right_on = data_feature_name)
+    left_on = shape_feature_name, right_on = data_feature_name, how = 'outer')
+    if dropna_geometry == True:
+        merged_shape_data_table.dropna(subset = 'geometry', inplace = True)
     return merged_shape_data_table
 
 
@@ -252,7 +273,8 @@ def generate_map(merged_data_table, shape_feature_name,
     popup_variable_text = 'Value',  variable_decimals = 4, 
     fill_color = 'Blues', rows_to_map = 0, bin_count = 8, 
     bin_type = 'percentiles', tiles = 'Stamen Toner', generate_image = True,
-    multiply_data_by = 1, vertical_legend = False, path_to_legends = ''):
+    multiply_data_by = 1, vertical_legend = False, path_to_legends = '', 
+    debug = False):
     '''
     This function uses a merged data table created through prepare_zip_table,
     prepare_county_table, or prepare_zip_table to generate an interactive
@@ -285,6 +307,9 @@ def generate_map(merged_data_table, shape_feature_name,
     html_save_path: The path to the folder in which the .html version of the 
     map should be saved. This may need to be an absolute path, as 
     I encountered errors using a relative path.
+
+    debug: When set to True, this function prints information about 
+    what the function is about to perform.
 
     Important note: If you choose to use vertical legends, 
     I recommend choosing '' for the HTML save path, which ensures that the map
@@ -401,9 +426,12 @@ def generate_map(merged_data_table, shape_feature_name,
 
     '''
 
+    if debug == True:
+        print("Starting function")
+
     # The function will first drop rows in the table 
     # whose data variable column value is missing.
-    merged_data_table_copy = merged_data_table.copy().copy().dropna(
+    merged_data_table_copy = merged_data_table.copy().dropna(
         subset = [data_variable]) 
 
     #It will then multiply all values in the data variable column by
@@ -459,6 +487,9 @@ either \'percentiles\' or \'equally spaced.\'')
 
     # Next, the color scheme for the map will get loaded into the project.
 
+    if debug == True:
+        print("Creating color dict")
+
     with open('color_schemes_from_branca.json') as file:
         color_file = file.read()
     # https://docs.python.org/3/tutorial/inputoutput.html
@@ -503,10 +534,16 @@ either \'percentiles\' or \'equally spaced.\'')
     # coordinate data within the 'geometry' column of merged_data_table_copy,
     # but I could be wrong. I'm just glad it works!
 
+    if debug == True:
+        print("Creating style function")
+
     style_function = lambda x: {'weight':0.5, 'color': 'black', 
     'fillColor':stepped_cm(x['properties'][data_variable]), 'fillOpacity':0.75}
     # fillOpacity is set to 0.75 so that city and state names can be viewed
     # underneath the colored shapes.
+
+    if debug == True:
+        print("Creating tooltip")
 
 
     # Next, I'll create a GeoJsonTooltip object that will display the region
@@ -514,6 +551,9 @@ either \'percentiles\' or \'equally spaced.\'')
     tooltip = folium.features.GeoJsonTooltip(fields=[shape_feature_name,data_variable], aliases = [feature_text, popup_variable_text])
     # See https://python-visualization.github.io/folium/modules.html#folium.features.GeoJsonTooltip
     # and https://python-visualization.github.io/folium/modules.html#folium.features.GeoJson
+
+    if debug == True:
+        print("Rendering map")
 
     geojson_object = folium.features.GeoJson(merged_data_table_copy, 
     style_function = style_function, tooltip = tooltip)
@@ -551,6 +591,9 @@ either \'percentiles\' or \'equally spaced.\'')
     # m.keep_in_front(data_popup)
     # folium.LayerControl().add_to(m)
 
+    if debug == True:
+        print("Creating vertical legend (if requested)")
+
     # The function next calls create_vertical_legend to add a vertical
     # legend to the map (if requested).
     if vertical_legend == True:
@@ -578,8 +621,14 @@ either \'percentiles\' or \'equally spaced.\'')
         stepped_cm.caption = data_variable_text
         stepped_cm.add_to(m)
 
+    if debug == True:
+        print("Saving map")
+
 
     m.save(html_save_path+'\\'+map_name+'.html')
+
+    if debug == True:
+        print("Generating screenshot")
 
 
     if generate_image == True:
@@ -616,6 +665,9 @@ either \'percentiles\' or \'equally spaced.\'')
 
         ff_driver.quit()
         # Based on: https://www.selenium.dev/documentation/webdriver/browser/windows/
+
+    if debug == True:
+        print("Returning map")
 
     return m
 
@@ -752,6 +804,7 @@ def old_generate_map(merged_data_table, shape_feature_name,
     # Selenium. Note that some setup work is required for the Selenium code
     # to run correctly; if you don't have time right now to complete this 
     # setup, you can skip the screenshot generation process.
+
 
     if generate_image == True:
 
