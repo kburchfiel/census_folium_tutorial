@@ -269,7 +269,7 @@ data_path, data_feature_name, dropna_geometry = True):
 
 def generate_map(merged_data_table, shape_feature_name, 
     data_variable, feature_text, map_name, html_save_path, 
-    screenshot_save_path, data_variable_text = 'Value',
+    screenshot_save_path = '', data_variable_text = 'Value',
     popup_variable_text = 'Value',  variable_decimals = 4, 
     fill_color = 'Blues', rows_to_map = 0, bin_count = 8, 
     bin_type = 'percentiles', tiles = 'Stamen Toner', generate_image = True,
@@ -326,7 +326,10 @@ def generate_map(merged_data_table, shape_feature_name,
     cluttered than you might like.
 
     screenshot_save_path: The path to the folder in which the .html 
-    version of the map should be saved. This can be a relative path.
+    version of the map should be saved. This can be a relative path. Note
+    that, if specifying a screenshot_save_path value other than '', 
+    you must create this path within your project folder before the
+    function is run; otherwise, it won't return an image.
 
     data_variable_text: A string representing how the data variable should
     be represented textually within the map's legend.
@@ -658,10 +661,20 @@ either \'percentiles\' or \'equally spaced.\'')
         # time to load the map tiles before the screenshot is taken. 
         # You can also experiment with longer sleep times.
 
-        screenshot_image = ff_driver.get_screenshot_as_file(
+        if len(screenshot_save_path) > 0:
+            screenshot_image = ff_driver.get_screenshot_as_file(
             screenshot_save_path+'\\'+map_name+'.png') 
+
         # Based on:
         # https://www.selenium.dev/selenium/docs/api/java/org/openqa/selenium/TakesScreenshot.html
+        # If specifying a screenshot save path, you must create this path
+        # within your directory before the function is run; otherwise,
+        # it won't return an image. Relative paths (e.g. 
+        # 'folium_map_screenshots') should work fine.
+
+        else: 
+            ff_driver.get_screenshot_as_file(map_name+'.png') 
+
 
         ff_driver.quit()
         # Based on: https://www.selenium.dev/documentation/webdriver/browser/windows/
