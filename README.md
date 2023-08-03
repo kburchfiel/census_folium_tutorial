@@ -17,60 +17,58 @@ Here are example screenshots of the choropleth maps currently stored in this rep
 
 ### Population growth data:
 
+#### Population growth from the American Community Survey's 2016 5-year averages to its 2021 5-year averages:
 
-**Zip-level population growth from the American Community Survey's 2015 5-year averages to its 2020 5-year averages::**
-![](https://raw.githubusercontent.com/kburchfiel/census_folium_tutorial/master/census_folium_map_screenshots/acs5_2015_2020_zip_pop_growth.png)
+**Zip-level growth:**
 
-**County-level population growth from the American Community Survey's 2015 5-year averages to its 2020 5-year averages:**
+![](https://raw.githubusercontent.com/kburchfiel/census_folium_tutorial/master/census_folium_map_screenshots/acs5_2016_2021_zip_pop_growth.png?raw=true)
 
-![](https://raw.githubusercontent.com/kburchfiel/census_folium_tutorial/master/census_folium_map_screenshots/acs5_2015_2020_county_pop_growth.png)
+**County-level growth:**
 
+![](https://raw.githubusercontent.com/kburchfiel/census_folium_tutorial/master/census_folium_map_screenshots/acs5_2016_2021_county_pop_growth.png?raw=true)
 
-**State-level population growth from the American Community Survey's 2015 5-year averages to its 2020 5-year averages:**
-![](https://raw.githubusercontent.com/kburchfiel/census_folium_tutorial/master/census_folium_map_screenshots/acs5_2015_2020_state_pop_growth.png)
+**State-level growth:**
 
-**County-level population growth from 2010 to 2020 (according to the decennial census:**
-![](https://raw.githubusercontent.com/kburchfiel/census_folium_tutorial/master/census_folium_map_screenshots/census_2010_2020_county_pop_growth.png)
+![](https://raw.githubusercontent.com/kburchfiel/census_folium_tutorial/master/census_folium_map_screenshots/acs5_2016_2021_state_pop_growth.png?raw=true)
+
+#### County-level population growth from 2010 to 2020 (according to the decennial census):
+
+![](https://raw.githubusercontent.com/kburchfiel/census_folium_tutorial/master/census_folium_map_screenshots/census_2010_2020_county_pop_growth.png?raw=true)
 
 
 ### Demographic data:
 
-Note that the zip- and county-level maps contain data from the ACS 2019 community survey (5-year averages), whereas the state-level maps contain data from the ACS 2019 community survey.
-
-Also note that these maps only show counties and zip codes with at least 1,000 households.
+These maps contain data from the ACS 2021 community survey (5-year averages). Also note that these maps only show counties and zip codes with at least 1,000 households.
 
 **The proportion of households in each zip code that consist of a married couple with at least one child:**
 
-![](https://github.com/kburchfiel/census_folium_tutorial/blob/master/census_folium_map_screenshots/zip_married_couples_with_kids.png)
-
+![](https://github.com/kburchfiel/census_folium_tutorial/blob/master/census_folium_map_screenshots/zip_married_couples_with_kids_acs5_2021.png?raw=true)
 
 
 **Median household income by zip code:**
 
-![](https://github.com/kburchfiel/census_folium_tutorial/blob/master/census_folium_map_screenshots/zip_median_hh_income.png)
-
+![](https://github.com/kburchfiel/census_folium_tutorial/blob/master/census_folium_map_screenshots/zip_median_hh_income_acs5_2021.png?raw=true)
 
 
 **The proportion of households in each county that consist of a married couple with at least one child:**
 
-![](https://github.com/kburchfiel/census_folium_tutorial/blob/master/census_folium_map_screenshots/county_married_couples_with_kids.png?raw=true)
-
+![](https://github.com/kburchfiel/census_folium_tutorial/blob/master/census_folium_map_screenshots/county_married_couples_with_kids_acs5_2021.png?raw=true)
 
 
 **Median household income by county:**
 
-![](https://github.com/kburchfiel/census_folium_tutorial/blob/master/census_folium_map_screenshots/county_median_hh_income.png?raw=true)
+![](https://github.com/kburchfiel/census_folium_tutorial/blob/master/census_folium_map_screenshots/county_median_hh_income_acs5_2021.png?raw=true)
 
 
 
 **The proportion of households in each state that consist of a married couple with at least one child:**
 
-![](https://github.com/kburchfiel/census_folium_tutorial/blob/master/census_folium_map_screenshots/state_married_couples_with_kids.png?raw=true)
+![](https://github.com/kburchfiel/census_folium_tutorial/blob/master/census_folium_map_screenshots/state_married_couples_with_kids_acs5_2021.png?raw=true)
 
 
 
 **Median household income by state:**
-![](https://github.com/kburchfiel/census_folium_tutorial/blob/master/census_folium_map_screenshots/state_median_hh_income.png?raw=true)
+![](https://github.com/kburchfiel/census_folium_tutorial/blob/master/census_folium_map_screenshots/state_median_hh_income_acs5_2021.png?raw=true)
 
 
 
