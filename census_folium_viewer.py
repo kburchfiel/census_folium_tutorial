@@ -25,6 +25,7 @@ from folium.plugins import FloatImage
 import pandas as pd
 import time
 from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
 import numpy as np
 import json
 import matplotlib.pyplot as plt
@@ -641,19 +642,37 @@ either \'percentiles\' or \'equally spaced.\'')
         # See https://www.selenium.dev/documentation/ for more information on 
         # Selenium. Note that some setup work is required for the Selenium code
         # to run correctly; if you don't have time right now to complete this 
-        # setup, you can skip the screenshot generation process.
+        # setup, you can skip the screenshot generation process.     
 
-
-        ff_driver = webdriver.Firefox() 
-        # See https://www.selenium.dev/documentation/webdriver/getting_started/open_browser/
         # For more information on using Selenium to get screenshots of .html 
         # files, see my get_screenshots.ipynb file within my route_maps_builder
         # program, available here:
         # https://github.com/kburchfiel/route_maps_builder/blob/master/get_screenshots.ipynb
+        
+        # I had originally used Firefox as my webdriver; however, I found that
+        # my .svg legends weren't loading within Firefox, so I instead switched
+        # to Chrome. However, it seems that the Chrome and Firefox webdrivers
+        # respond differently to the set_window_size option, so the Chrome
+        # images ended up having a lower resolution.
+
+        # This section uses code from https://www.selenium.dev/documentation/webdriver/drivers/options/ 
+        options = Options() 
+        # The following two lines come from user 'undetected Selenium' at:
+        # # Based on https://stackoverflow.com/a/55016352/13097194
+        options.add_argument("--headless") # This ended up being necessary
+        # in order to set the width and height (as verified by get_window_size()
+        # below() equal to window_width and window_height. Without headless
+        # mode, the window ended up being significantly smaller.)
+        # options.add_argument(f"window-size={window_width},{window_height}")
+        ff_driver = webdriver.Chrome(options=options)
+
         window_width = 3000 # This produces a large window that can better
         # capture small details (such as zip code shapefiles).
-        ff_driver.set_window_size(window_width,window_width*(9/16)) # Creates
-        # a window with an HD/4K/8K aspect ratio
+        window_height = window_width * 9/16
+
+        ff_driver.set_window_size(window_width,window_width*(9/16))
+        # Based on https://stackoverflow.com/a/55016352/13097194
+        print(ff_driver.get_window_size())
 
         ff_driver.get(html_save_path+'\\'+map_name+'.html') 
         # See https://www.selenium.dev/documentation/webdriver/browser/navigation/
