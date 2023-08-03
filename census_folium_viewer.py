@@ -105,7 +105,7 @@ color_list, variable_decimals):
     # Finally, the plot is saved to an .svg file that can be read into 
     # the Folium map as a FloatImage object.
     # function can read
-    plt.savefig(path_to_legends+map_name+'_legend.svg', transparent = True)
+    plt.savefig(path_to_legends+'\\'+map_name+'_legend.svg', transparent = True)
     # See https://stackoverflow.com/a/4708018/13097194
     # print("Saving to:",path_to_legends+map_name+'_legend.svg')
     # plt.show()
@@ -273,7 +273,7 @@ def generate_map(merged_data_table, shape_feature_name,
     popup_variable_text = 'Value',  variable_decimals = 4, 
     fill_color = 'Blues', rows_to_map = 0, bin_count = 8, 
     bin_type = 'percentiles', tiles = 'Stamen Toner', generate_image = True,
-    multiply_data_by = 1, vertical_legend = False, path_to_legends = '', 
+    multiply_data_by = 1, vertical_legend = False, 
     debug = False):
     '''
     This function uses a merged data table created through prepare_zip_table,
@@ -306,7 +306,7 @@ def generate_map(merged_data_table, shape_feature_name,
 
     html_save_path: The path to the folder in which the .html version of the 
     map should be saved. This may need to be an absolute path, as 
-    I encountered errors using a relative path.
+    I encountered errors using a relative path. Legends will also be saved here.
 
     debug: When set to True, this function prints information about 
     what the function is about to perform.
@@ -602,12 +602,12 @@ either \'percentiles\' or \'equally spaced.\'')
     if vertical_legend == True:
         create_vertical_legend(color_list = color_list, bins = bins, 
         map_name = map_name, data_variable_text = data_variable_text, 
-        path_to_legends = path_to_legends, 
+        path_to_legends = html_save_path, 
         variable_decimals = variable_decimals)
         # stepped_cm.colors can be used in place of color_list, but
         # they should have the same values anyway
         # print("Loading from:",path_to_legends+map_name+'_legend.svg')
-        FloatImage(path_to_legends+map_name+'_legend.svg', bottom = 20, 
+        FloatImage(html_save_path+'\\'+map_name+'_legend.svg', bottom = 20, 
         left = 85).add_to(m)
         # See https://github.com/python-visualization/folium/blob/main/examples/FloatImage.ipynb
         # Although the example code uses a URL, FloatImage also works with 
